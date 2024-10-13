@@ -1,0 +1,27 @@
+### 获取balance
+GET https://blockchain.info/balance?active=bc1ppx2920044ru2zufdpvkr3z8m26z2jn6zq8wnn0egc5pxheu6pf5qem7szj
+Content-Type: application/json
+
+### 获取UTXO
+GET https://blockchain.info/unspent?active=bc1ppx2920044ru2zufdpvkr3z8m26z2jn6zq8wnn0egc5pxheu6pf5qem7szj
+Content-Type: application/json
+
+
+#{
+#"tx_hash_big_endian": "82967954613a9f15008b8dc7c7742769f0a1b5eed10c203cda357916f24e632b",
+#"tx_hash": "2b634ef2167935da3c200cd1eeb5a1f0692774c7c78d8b00159f3a6154799682",
+#"tx_output_n": 0,
+#"script": "51200994553df5a8f8a1712d0b2c3888fb5684a94f4201dd39bf28c5026be79a0a68",
+#"value": 1000,
+#"value_hex": "03e8",
+#"confirmations": 41885,
+#"tx_index": 1526576839839526
+#}
+
+#签名时对应的数据
+#{
+#  "address": "",
+#  "tid": "",  //对应tx_hash
+#  "amount": 100, // 对应value
+#  "vout": 0 //对应tx_output_n
+#}
