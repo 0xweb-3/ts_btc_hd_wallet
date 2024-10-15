@@ -25,3 +25,10 @@ Content-Type: application/json
 #  "amount": 100, // 对应value
 #  "vout": 0 //对应tx_output_n
 #}
+
+### 获取交易信息
+GET https://blockchain.info/rawtx/1ab368aec3332c67334b5153f5f07703d541f4c2f7c4776611168f9de9372cb2
+Content-Type: application/json
+
+
+### 获取预估手续费

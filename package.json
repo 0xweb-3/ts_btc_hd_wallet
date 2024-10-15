@@ -1,0 +1,32 @@
+{
+  "name": "ts_btc_hd_wallet",
+  "version": "1.0.0",
+  "description": "比特币的HD钱包开发",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "devDependencies": {
+    "@types/bip32": "^2.0.0",
+    "@types/bip39": "^3.0.0",
+    "@types/bitcoinjs-lib": "^5.0.0",
+    "@types/jest": "^29.5.13",
+    "@types/tiny-secp256k1": "^2.0.1",
+    "bip32": "^5.0.0-rc.0",
+    "bip39": "^3.1.0",
+    "bitcoinjs-lib": "^7.0.0-rc.0",
+    "crypto": "^1.0.1",
+    "jest": "^29.7.0",
+    "tiny-secp256k1": "^2.2.3",
+    "ts-jest": "^29.2.5",
+    "ts-loader": "^9.5.1",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
