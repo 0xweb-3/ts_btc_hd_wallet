@@ -2,7 +2,7 @@ import * as bip39 from 'bip39';
 import {BIP32Factory} from 'bip32';
 import * as ecc from 'tiny-secp256k1';
 import * as bitcoin from 'bitcoinjs-lib';
-import {BTCAddressInfo,AddressType} from './types/wallet';
+import {BTCAddressInfo, AddressType} from './types/wallet';
 
 // 初始化 ECC 库
 bitcoin.initEccLib(ecc);
@@ -13,9 +13,9 @@ const bip32 = BIP32Factory(ecc);
 export function generateBTCAddressFromMnemonic(
     mnemonic: string,
     addressType: AddressType,
+    network: bitcoin.Network = bitcoin.networks.bitcoin,
     index: number = 0, // 钱包的排序
     isChange: number = 0, // 是否找零地址
-    network: bitcoin.Network = bitcoin.networks.bitcoin,
 ): BTCAddressInfo {
     if (!bip39.validateMnemonic(mnemonic)) {
         throw new Error('Invalid mnemonic');
@@ -60,8 +60,8 @@ export function generateBTCAddressFromMnemonic(
             break;
 
         case AddressType.P2SH:
-            const p2wpkh = bitcoin.payments.p2wpkh({ pubkey: publicKey, network });
-            const p2sh = bitcoin.payments.p2sh({ redeem: p2wpkh, network });
+            const p2wpkh = bitcoin.payments.p2wpkh({pubkey: publicKey, network});
+            const p2sh = bitcoin.payments.p2sh({redeem: p2wpkh, network});
             if (!p2sh.address) {
                 throw new Error('P2SH address generation failed');
             }
@@ -69,7 +69,7 @@ export function generateBTCAddressFromMnemonic(
             break;
 
         case AddressType.BECH32:
-            const bech32 = bitcoin.payments.p2wpkh({ pubkey: publicKey, network });
+            const bech32 = bitcoin.payments.p2wpkh({pubkey: publicKey, network});
             address = bech32.address!;
             break;
 
