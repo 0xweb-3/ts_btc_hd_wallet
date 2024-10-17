@@ -39,7 +39,7 @@ describe("signTransaction", () => {
 
         // 定义发送金额和接收地址  satoshi（1 BTC = 100,000,000 satoshi）。
         const sendAmount = BigInt(1000);  // 发送金额 (satoshis)
-        const recipientAddress: string = "2MxT7NPD5w8bVVkh7LATActbvdm1pGNWchG";  // 接收地址
+        const recipientAddress: string = "tb1qrm63pp9qya6vhh69d6mquu3ygjrmm38ezzp0dc";  // 接收地址
 
         // 计算找零金额
         const totalInputAmount: bigint = inputs.reduce((acc, input) => acc + input.amount, BigInt(0));
