@@ -2,22 +2,10 @@ import * as bitcoin from 'bitcoinjs-lib';
 import * as ECPairFactory from 'ecpair';
 import * as ecc from 'tiny-secp256k1';
 
-import {BTCAddressInfo, AddressType} from './types/wallet';
+import { BTCAddressInfo, AddressType, TransactionInput, TransactionOutput } from './types/wallet';
 
 // 使用 ecpair 生成密钥对
 const ECPair = ECPairFactory.ECPairFactory(ecc);
-
-interface TransactionInput {
-    txId: string;   // 输入交易的ID
-    index: number;  // 输入交易的索引
-    amount: bigint; // 输入交易的金额
-    scriptPubKey: string;  // 锁定脚本（根据地址类型生成）
-}
-
-interface TransactionOutput {
-    address: string; // 输出地址
-    amount: bigint;  // 输出金额
-}
 
 /**
  * 签名交易
@@ -34,67 +22,113 @@ export function signTransaction(
     addressType: AddressType,
     network: bitcoin.Network = bitcoin.networks.bitcoin, // 主网，可根据需要改为 testnet
 ): string {
-    // 1. 创建 Bitcoin 网络参数
-    // const network = bitcoin.networks.bitcoin; // 主网，可根据需要改为 testnet
+    // 1. 创建未签名交易
+    const psbt = new bitcoin.Psbt({ network });
 
-    // 2. 创建未签名交易
-    const psbt = new bitcoin.Psbt({network});
-
-    // 3. 添加输入
+    // 2. 添加输入
     inputs.forEach(input => {
-        psbt.addInput({
-            hash: input.txId,
-            index: input.index,
-            witnessUtxo: {
-                script: Buffer.from(input.scriptPubKey, 'hex'),
-                value: input.amount
-            }
-        });
+        let scriptPubKeyBuffer = Buffer.from(input.scriptPubKey, 'hex');
+        const isSegwit = addressType === AddressType.BECH32 || addressType === AddressType.P2SH;
+
+        if (isSegwit) {
+            // 确保是 SegWit 脚本
+            psbt.addInput({
+                hash: input.txId,
+                index: input.index,
+                witnessUtxo: {
+                    script: scriptPubKeyBuffer,
+                    value: input.amount
+                }
+            });
+        } else {
+            // 使用非 SegWit 脚本
+            psbt.addInput({
+                hash: input.txId,
+                index: input.index,
+                nonWitnessUtxo: scriptPubKeyBuffer // 这里确保非 SegWit 输入
+            });
+        }
     });
 
-    // 4. 添加输出
+    // 3. 添加输出
     outputs.forEach(output => {
+        let payment: bitcoin.payments.Payment;
+
+        switch (addressType) {
+            case AddressType.P2PKH:
+                payment = bitcoin.payments.p2pkh({ address: output.address, network });
+                break;
+            case AddressType.P2SH:
+                payment = bitcoin.payments.p2sh({
+                    redeem: bitcoin.payments.p2wpkh({ address: output.address, network })
+                });
+                break;
+            case AddressType.BECH32:
+                payment = bitcoin.payments.p2wpkh({ address: output.address, network });
+                break;
+            case AddressType.TAPROOT:
+                throw new Error('Taproot address signing is not supported yet.');
+            default:
+                throw new Error(`Unsupported address type: ${addressType}`);
+        }
+
+        // 检查 payment.output 是否为 undefined
+        if (!payment.output) {
+            throw new Error(`Failed to create output script for address: ${output.address}`);
+        }
+
         psbt.addOutput({
-            address: output.address,
+            script: payment.output,
             value: output.amount
         });
     });
 
-    // 5. 获取私钥
-    const keyPair = ECPair.fromWIF(addressInfo.privateKey, network);
+    // 4. 获取私钥
+    const keyPair = ECPair.fromPrivateKey(Buffer.from(addressInfo.privateKey, 'hex'), { network });
 
-    // 6. 根据地址类型签名交易
-    switch (addressType) {
-        case AddressType.P2PKH:
-            inputs.forEach((input, i) => {
-                psbt.signInput(i, keyPair);
-            });
-            break;
+    // 5. 根据地址类型签名交易
+    inputs.forEach((input, i) => {
+        psbt.signInput(i, keyPair);
+    });
 
-        case AddressType.P2SH:
-            // P2SH 签名方式
-            inputs.forEach((input, i) => {
-                psbt.signInput(i, keyPair);
-            });
-            break;
-
-        case AddressType.BECH32:
-            inputs.forEach((input, i) => {
-                psbt.signInput(i, keyPair);
-            });
-            break;
-
-        case AddressType.TAPROOT:
-            throw new Error('Taproot address signing is not supported yet.');
-    }
-
-    // 7. 校验签名，传入自定义的验证签名函数
+    // 6. 校验签名，传入自定义的验证签名函数
     psbt.validateSignaturesOfAllInputs((pubkey, msghash, signature) => {
         return ecc.verify(msghash, pubkey, signature);
     });
     psbt.finalizeAllInputs();
 
-    // 8. 导出原始交易
+    // 7. 导出原始交易
     const signedTransaction = psbt.extractTransaction().toHex();
     return signedTransaction;
 }
+
+// export function getScriptPubKey(
+//     addressType: AddressType,
+//     address: string,
+//     network: bitcoin.Network = bitcoin.networks.bitcoin // 默认主网
+// ): string {
+//     let payment: bitcoin.payments.Payment;
+//
+//     switch (addressType) {
+//         case AddressType.P2PKH:
+//             payment = bitcoin.payments.p2pkh({ address, network });
+//             break;
+//         case AddressType.P2SH:
+//             payment = bitcoin.payments.p2sh({
+//                 redeem: bitcoin.payments.p2wpkh({ address, network })
+//             });
+//             break;
+//         case AddressType.BECH32:
+//             payment = bitcoin.payments.p2wpkh({ address, network });
+//             break;
+//         case AddressType.TAPROOT:
+//             payment = bitcoin.payments.p2wsh({
+//                 redeem: bitcoin.payments.p2wpkh({ address, network })
+//             });
+//             break;
+//         default:
+//             throw new Error(`Unsupported address type: ${addressType}`);
+//     }
+//
+//     return payment.output?.toString() || '';
+// }

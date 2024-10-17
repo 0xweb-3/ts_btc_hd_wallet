@@ -2,6 +2,10 @@
 GET https://mempool.space/testnet/api/address/tb1qrm63pp9qya6vhh69d6mquu3ygjrmm38ezzp0dc/utxo
 Content-Type: application/json
 
+### 获取scriptPubKey
+GET https://mempool.space/testnet/api/v1/validate-address/tb1qrm63pp9qya6vhh69d6mquu3ygjrmm38ezzp0dc
+Content-Type: application/json
+
 ### 获取推荐费用
 GET https://mempool.space/testnet/api/v1/fees/recommended
 Content-Type: application/json
@@ -19,5 +23,14 @@ GET https://mempool.space/testnet/api/block/0000000000000f60c9c286b3ce312d775400
 Content-Type: application/json
 
 ### 获取块儿头信息
+GET https://mempool.space/testnet/api/block/0000000000000f60c9c286b3ce312d775400a868c619859133e5ce55ef92e3b0/header
+Content-Type: application/json
+
+### 广播交易
+POST https://mempool.space/testnet/api/tx
+Content-Type: application/x-www-form-urlencoded
+0200000000010225aed0680ba0ebc5f9ab58b80b2a2f29685832e489ec8a70b75cdfc2df1f35c50000000000ffffffff41bb7554d48540eafe2c6f44d52eb753d404cb69c7b6b3d28bb45526684ae4180000000000ffffffff02e8030000000000001600141ef51084a02774cbdf456eb60e72244487bdc4f975590000000000001600141ef51084a02774cbdf456eb60e72244487bdc4f90247304402205154f1d0737a69029f84aebb6dc8a66efb66d94baf5f0f99995747ad53d2ee7c0220540a06b6932cfabf290521094767c7b6fd7d3b1aaeabbd0e3ae2c590d04bb7c20121037e514eeaaeb01a4e0a5a99d1efac2cd4289277d143433d1a74c0ea6db832cf250247304402201f65a66000bf15ddd20cb309193ee5fa3f83182939d2e2b891af9142e09e5d7d02203ffb78169bd8e5d5eb03ca8f57850215b0b61a5e721e9e7eb3299737a9ba02ae0121037e514eeaaeb01a4e0a5a99d1efac2cd4289277d143433d1a74c0ea6db832cf2500000000
+
+### 获取交易信息
 GET https://mempool.space/testnet/api/block/0000000000000f60c9c286b3ce312d775400a868c619859133e5ce55ef92e3b0/header
 Content-Type: application/json

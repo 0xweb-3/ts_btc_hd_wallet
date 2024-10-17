@@ -1,4 +1,3 @@
-// tests/mnemonic.test.ts
 import { generateMnemonic } from '../src/mnemonic';
 
 describe('generateMnemonic', () => {
