@@ -103,3 +103,8 @@ https://mempool.space/docs/api/rest
 
 ## BTC交易详解文档
 * https://aandds.com/blog/bitcoin-tx.html#7cd69889
+
+## 待补充
+1. 处理发送交易找不到问题
+2. 新增TAPROOT交易类型
+3. 支持不同地址之间的互相转账

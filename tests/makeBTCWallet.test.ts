@@ -21,13 +21,13 @@ describe('generateBTCAddressFromMnemonic', () => {
         const walletInfoBECH32:BTCAddressInfo = await generateBTCAddressFromMnemonic(mnemonicStr, AddressType.BECH32, bitcoin.networks.testnet);
         const walletInfoTAPROOT:BTCAddressInfo = await generateBTCAddressFromMnemonic(mnemonicStr, AddressType.TAPROOT, bitcoin.networks.testnet);
 
-        console.log("P2PKH", walletInfoP2PKH)
+        // console.log("P2PKH", walletInfoP2PKH)
         // 主网地址：
         // 测试网地址：2MxT7NPD5w8bVVkh7LATActbvdm1pGNWchG
         // console.log("P2SH", walletInfoP2SH)
         // 主网地址：
         // 测试网地址：tb1qrm63pp9qya6vhh69d6mquu3ygjrmm38ezzp0dc
-        // console.log("BECH32", walletInfoBECH32)
+        console.log("BECH32", walletInfoBECH32)
         // 主网地址：
         // 测试网地址：tb1puyx8deu7k9fky80ahrkaphrat85az9ss8q8fn05efdc3f34hz08qj89xpy
         // console.log("TAPROOT", walletInfoTAPROOT)
